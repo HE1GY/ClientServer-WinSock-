@@ -19,8 +19,7 @@ int main()
 	}
 	else
 	{
-		std::cout<<"Winsock dll  found!"<<std::endl;
-		std::cout<<"Status: "<<wsa_data.szSystemStatus<<std::endl;
+		std::cout<<"Winsock dll found!"<<std::endl;
 	}
 
 	server_socket=INVALID_SOCKET;
@@ -33,7 +32,7 @@ int main()
 	}
 	else
 	{
-		std::cout<<"socket OK!"<<std::endl;
+		std::cout<<"Socket created"<<std::endl;
 	}
 
 	sockaddr_in service;
@@ -49,7 +48,7 @@ int main()
 	}
 	else
 	{
-		std::cout<<"bind socket OK!"<<std::endl;
+		std::cout<<"Bind socket: "<<"127.0.0.1 "<<port<<std::endl;
 	}
 
 	if(listen(server_socket,1)==SOCKET_ERROR)
@@ -59,7 +58,7 @@ int main()
 	}
 	else
 	{
-		std::cout<<"waiting fo connection"<<std::endl;
+		std::cout<<"Waiting for connection..."<<std::endl;
 	}
 
 	accept_socket=accept(server_socket,NULL,NULL);
@@ -69,11 +68,32 @@ int main()
 		WSACleanup();
 		return -1;
 	}
-	std::cout<<"Accept connection"<<std::endl;
+	std::cout<<"Accept connection!"<<std::endl;
+
+	char receive_buffer[200]{};
+	int byte_count = recv(accept_socket,receive_buffer,200,0);
+	if(byte_count<0)
+	{
+		std::cout<<"Server error "<<WSAGetLastError<<std::endl;
+	}
+	else
+	{
+		std::cout<<"Client: "<<receive_buffer<<std::endl;
+	}
+
+	char confirmation[200] ="Message Received!";
+	byte_count = send(accept_socket,confirmation,200,0);
+	if(byte_count<0)
+	{
+		std::cout<<"Server error "<<WSAGetLastError<<std::endl;
+	}
+	else
+	{
+		std::cout<<"Server: "<<confirmation<<std::endl;
+	}
+
 	system("pause");
 	WSACleanup();
-
-
 
 	return 0;
 }
